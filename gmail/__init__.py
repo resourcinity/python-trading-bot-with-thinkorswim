@@ -231,9 +231,20 @@ class Gmail:
         payloads = []
 
         try:
+            # results = self.service.users().labels().list(userId='me').execute()
+            # labels = results.get('labels', [])
+            #
+            # if not labels:
+            #     print('No labels found.')
+            # else:
+            #     print('Labels:')
+            #     for label in labels:
+            #         print(label['name'] + " " + label['id'])
 
+            #you have to use a label id instead of label name label id for "trades" label = Label_1420008119050252098
+            #trades-done label id = Label_180329884279631386
             # GETS LIST OF ALL EMAILS
-            results = self.service.users().messages().list(userId='me').execute()
+            results = self.service.users().messages().list(userId='me', labelIds=["Label_1420008119050252098"]).execute()
 
             if results['resultSizeEstimate'] != 0:
 
@@ -248,10 +259,24 @@ class Gmail:
                         if payload["name"] == "Subject":
 
                             payloads.append(payload["value"].strip())
+                            print(payloads);
+                    #Mremove trades label and apply trade-done label
+                    move_email_to_done = {
+                        "addLabelIds": [
+                        "Label_180329884279631386"
+                        ],
+                        "removeLabelIds": [
+                        "Label_1420008119050252098"
+                        ]
+                    }
+
+                    op_result =self.service.users().messages().modify(
+                         userId='me', id=message["id"], body=move_email_to_done).execute()
+                    print(op_result)
 
                     # MOVE EMAIL TO TRASH FOLDER
-                    self.service.users().messages().trash(
-                        userId='me', id=message["id"]).execute()
+                    # self.service.users().messages().trash(
+                    #     userId='me', id=message["id"]).execute()
 
         except Exception as e:
 

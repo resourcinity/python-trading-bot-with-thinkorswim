@@ -18,6 +18,6 @@ requests = "*"
 pytz = "*"
 psutil = "*"
 certifi = "*"
-
+azure-cosmos ="*"
 [requires]
 python_version = "3.8"
